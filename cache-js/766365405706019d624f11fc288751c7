@@ -1,0 +1,1533 @@
+/*hammerhead|script|start*/if (typeof window !== 'undefined' && window){window['hammerhead|process-dom-method'] && window['hammerhead|process-dom-method']();if (window.__get$ && typeof __get$ === 'undefined')var __get$Loc = window.__get$Loc,__set$Loc = window.__set$Loc,__set$ = window.__set$,__get$ = window.__get$,__call$ = window.__call$,__get$Eval = window.__get$Eval,__proc$Script = window.__proc$Script,__proc$Html = window.__proc$Html,__get$PostMessage = window.__get$PostMessage,__get$ProxyUrl = window.__get$ProxyUrl,__rest$Array = window.__rest$Array,__rest$Object = window.__rest$Object,__arrayFrom$ = window.__arrayFrom$;} else {if (typeof __get$ === 'undefined')var __get$Loc = function(l){return l},__set$Loc = function(l,v){return l = v},__set$ = function(o,p,v){return o[p] = v},__get$ = function(o,p){return o[p]},__call$ = function(o,p,a){return o[p].apply(o,a)},__get$Eval = function(e){return e},__proc$Script = function(s){return s},__proc$Html = function(h){return h},__get$PostMessage = function(w,p){return arguments.length===1?w.postMessage:p},__get$ProxyUrl = function(u,d){return u},__rest$Array = function(a,i){return Array.prototype.slice.call(a, i)},__rest$Object = function(o,p){var k=Object.keys(o),n={};for(var i=0;i<k.length;++i)if(p.indexOf(k[i])<0)n[k[i]]=o[k[i]];return n},__arrayFrom$ = function(r){if(!r)return r;return!Array.isArray(r)&&"function"==typeof r[Symbol.iterator]?Array.from(r):r};if (typeof importScripts !== "undefined" && /\[native code]/g.test(importScripts.toString())) {var __getWorkerSettings$ = function () {return null};importScripts((location.origin || (location.protocol + "//" + location.host)) + "/worker-hammerhead.js");}}/*hammerhead|script|processing-header-end*/
+$(function(){
+    //dom节点
+    (function (iptwr,ipt,btnwr,btn){
+        // 框升级2.0 搜索框交互样式升级
+        var samNewBox = bds && bds.comm && bds.comm.samNewBox;
+        var form = $('#form');
+        if(iptwr && ipt){
+            iptwr.on('mouseover',function(){
+                iptwr.addClass('ipthover');
+                if (samNewBox) {
+                    btn.addClass('btnfocus');
+                    form.addClass('sam_form_shadow');
+                }
+            }).on('mouseout',function(){
+                iptwr.removeClass('ipthover');
+                if (samNewBox) {
+                    var hasIptfocus = iptwr.hasClass('iptfocus');
+                    if (!hasIptfocus) {
+                        btn.removeClass('btnfocus');
+                        form.removeClass('sam_form_shadow');
+                    }
+                }
+            });
+            ipt.on('focus',function(){
+                iptwr.addClass('iptfocus');
+                if (samNewBox) {
+                    btn.addClass('btnfocus');
+                    form.addClass('sam_form_shadow');
+                }
+            }).on('blur',function(){
+                iptwr.removeClass('iptfocus');
+                if (samNewBox) {
+                    btn.removeClass('btnfocus');
+                    form.removeClass('sam_form_shadow');
+                }
+            }).on('render',function(e){
+                var $s = iptwr.parent().find('.bdsug');
+                var l = $s.find('li').length;
+                if(l>=5){
+                    $s.addClass('bdsugbg');
+                }else{
+                    $s.removeClass('bdsugbg');
+                }
+            });
+        }
+        if(btnwr && btn){
+            btnwr.on('mouseover',function(){
+                btn.addClass('btnhover');
+                if (samNewBox) {
+                    iptwr.addClass('ipthover');
+                    btn.addClass('btnfocus');
+                    form.addClass('sam_form_shadow');
+                }
+            }).on('mouseout',function(){
+                btn.removeClass('btnhover');
+                if (samNewBox) {
+                    var hasIptfocus = iptwr.hasClass('iptfocus');
+                    if (!hasIptfocus) {
+                        btn.removeClass('btnfocus');
+                        form.removeClass('sam_form_shadow');
+                    }
+                    iptwr.removeClass('ipthover');
+                }
+                btn.removeClass('s_btn_h');
+            }).on("mousedown",function(){
+                btn.removeClass('btnhover');
+                btn.addClass('s_btn_h');
+            }).on('mouseup',function(){
+                btn.addClass('btnhover');
+                btn.removeClass('s_btn_h');
+            });
+        }
+    })($('.s_ipt_wr'),$('.s_ipt'),$('.s_btn_wr'),$('.s_btn'));
+
+    var $wrapper = $("#wrapper"),
+        $u = $("#u"),
+        $pf = $("#u .pf,#u1 .pf,#u_sp .pf"),
+        $curpf;
+
+    var nucssloaded = 0,
+        pfmenuloaded = 0,
+        pfjsloaded = 0,
+        $arrowpf,$pfmenu,$usermenu,$arrowusermenu;
+
+
+    var time = 70;
+
+    //新增点击统计
+    //链接，按钮点击；百度一下搜索按钮点击参数；
+    var $enterlog = $("<input type='hidden' name='rsv_enter' value='1'>");
+    $("#form").append($enterlog);
+    $("#su").on("mousedown",function(){
+        // 加判断避免和首页的旧UBC重复打
+        if (!bds.comm.ishome) {
+            // 点击 百度一下 发起搜索
+            require(['modules/page-log/ubc-log'], function (Ubc) {
+                Ubc.sendIptLog(18463, 'se_btn');
+            });
+        }
+        $enterlog.val(0);
+    });
+
+    function nsc(name){
+        var reg = new RegExp('^\\s+|\\s+\x24'),
+            key =  __call$($("#kw").val(),"replace",[reg,'']) ;
+        ns_c({
+            'fm': 'behs',
+            'tab': name,
+            'query': encodeURIComponent(key),
+            'un': encodeURIComponent(bds.comm.user || '')
+        });
+    }
+
+    // 设置和个人中心 ubc通用方法
+    function setUbcLog(value, module) {
+        require(['modules/page-log/ubc-log'], function (Ubc) {
+            Ubc.sendUbcLog(19057, 'click', value, {
+                module
+            });
+        });
+    }
+
+    //事件处理
+    $(document).on("click",function(){
+        hideAll();
+    });
+
+    function initShowHide(opener,dom){
+        var hideTimeout;
+        var timeout = vanishtime;
+        opener.mouseover(function(){
+            dom.show();
+            $pfmenu && $pfmenu.hide();
+            clearTimer(timer1);
+            if(hideTimeout){
+                clearTimeout(hideTimeout);
+                hideTimeout=false;
+            }
+        });
+        opener.mouseout(function (){
+            if(hideTimeout){
+                clearTimeout(hideTimeout);
+                hideTimeout=false;
+            }
+            hideTimeout=setTimeout(function(){
+                dom.hide();
+            },timeout);
+        });
+        dom.mouseover(function(){
+            $pfmenu && $pfmenu.hide();
+            clearTimer(timer1);
+            if(hideTimeout){
+                clearTimeout(hideTimeout);
+                hideTimeout=false;
+            }
+        });
+        dom.mouseout(function(){
+            if(hideTimeout){
+                clearTimeout(hideTimeout);
+                hideTimeout=false;
+            }
+            hideTimeout=setTimeout(function(){
+                dom.hide();
+            },timeout);
+        });
+    }
+    // 登录后结果页
+    $u.delegate('.username','mouseover',function(){
+        if($(this).nextAll(".usermenu").length==0){
+            // 暂时下线消息入口，后续接口ready了还要重新上。
+            /*
+            var msgHtml = '<a href="http://i.baidu.com/msg/messages/list/" class="new-pmd" target="_blank" onmousedown="return user_c({\'fm\':\'set\',\'tab\':\'msg\'})">'
+                + '<span>消息</span>'
+                + '<span class="s-msg-count c-capsule-tip"></span>'
+                + '</a>';
+            */
+            $usermenu=$(
+                '<div class="usermenu">'
+                    +'<div class="bdnuarrow"><em></em><i></i></div>'
+                + '<a class="first" href="https://www.baidu.com/my/index" onmousedown="return user_c({\'fm\':\'set\',\'tab\':\'uc_center\'})"><span class="set">个人中心</span></a>'
+                    // + msgHtml
+                    +'<a class="user-setting" href="http://passport.baidu.com" name="tj_user"><span class="set">账号设置</span></a>'
+                    +'<a class="set-feedback" href="javascript:;"><span class="set">意见反馈</span></a>'
+                    +'<a class="last logout"  name="tj_logout" onmousedown="return user_c({\'fm\':\'set\',\'tab\':\'logout\'})"><span class="set">退出</span></a>'
+                +'</div>').insertAfter(this);
+            $usermenu.delegate(".set-feedback","click", function () {
+                setUbcLog('head_icon_pop', 'tjfeedback');
+                if ($('.fb-feedback-right-dialog').length > 0) {
+                    return false;
+                } else {
+                    nsc("tj_feedback");
+                    require(['plugins/feedback_suggest'], function (feedback) {
+                        feedback.init();
+                        $('.feedback').on('click', function () {
+                            feedback.destroy();
+                        });
+                    }); 
+                }
+            });
+            $usermenu.delegate(".logout","click",function(){
+                setUbcLog('head_icon_pop', 'tjlogout');
+                $('.search-quit-dialog-wrap').show();
+                c({
+                    'rsv_ct': '5',
+                    'rsv_cst': '1'
+                });
+            });
+            $usermenu.delegate(".user-setting","click",function(){
+                setUbcLog('head_icon_pop', 'tjuser');
+            });
+            $usermenu.delegate(".first","click",function(){
+                setUbcLog('head_icon_pop', 'tjucent');
+            });
+            $arrowusermenu=$(
+                '<div class="bdnuarrow arrowusermenu">'
+                +'</div>').insertAfter(this);
+            $usermenu.click(function(e){
+                e.stopPropagation();
+                //return false;
+            });
+            $arrowusermenu.click(function(e){
+                e.stopPropagation();
+                //return false;
+            });
+            initShowHide($(this),$usermenu.add($arrowusermenu));
+        }
+
+        var offset=$(this).offset();
+        var menuLeft = offset.left;
+
+        /*如果超出页面右边界，弹层右侧挨着右边界,2是左右边框的宽度*/
+        var menuRight = ($(this).width() - ($usermenu ? $usermenu.width() : 0)) / 2 + 24;
+        $usermenu && $usermenu.css({
+            top:48,
+            right:menuRight
+        });
+        // $usermenu && $usermenu.on
+        $arrowusermenu && $arrowusermenu.offset({'top':offset.top+18,left:menuLeft});
+    });
+    // 头像浮层曝光
+    $u.delegate('.username','mouseenter',function(){
+        require(['modules/page-log/ubc-log'], function (Ubc) {
+            Ubc.sendUbcLog(19057, 'show', 'head_icon_pop');
+        });
+    });
+
+
+    $pf.on("click",function(e){
+        return false;
+    });
+
+    /**
+     * 判断是否是super首页的新menu样式
+     */
+    function isSuperNewTopMenu () {
+        return bds.comm && bds.comm.ishome && bds.comm.sIndex;
+    }
+
+    // super首页
+    var superSettingMenu = $('#s-user-setting-menu');
+    if (isSuperNewTopMenu()) {
+        var superMenuLoad = 0;
+        // tts开关展现打点统计
+        var opt = {};
+        opt.baseParams = {
+            ct: 2,
+            qid: s_session.seqId,
+            sid: s_session.sid,
+            ssid: s_session.portrait,
+            logid: s_session.logId || '0',
+            _r: Math.random()
+        };
+        var thunder = window.Thunder.get(opt);
+        var thunderlogShow = {
+            tid: 11545,
+            logFrom: 'feed_index',
+            logInfo: 'tts_show',
+            logExtra: {
+                type: 'tts_switch_show'
+            }
+        }
+        // 注意superSettingMenu和$('#s-usersetting-top')的区别
+        $('#s-usersetting-top').on('mouseenter', function (e) {
+            var target = $(this);
+            e.stopPropagation();
+            e.preventDefault();
+            if (!superMenuLoad) {
+                addPfDom();
+                superMenuLoad = 1;
+            }
+            showSuperPfMenu(superSettingMenu, target);
+            // tts开关展现打点
+            if ($('.s-set-homepage-tts').length != 0) {
+                var thunderlog = $.extend(true, {}, thunderlogShow);
+                thunderlog.logExtra = $.stringify(thunderlog.logExtra);
+                thunder.send(thunderlog);
+            }
+        }).on('mouseleave', function () {
+            hideSuperPfMenu(superSettingMenu);
+        });
+        superSettingMenu.on('mouseenter', function (e) {
+            clearTimer();
+        }).on('mouseleave', function (e) {
+            hideSuperPfMenu(superSettingMenu);
+        });
+    }
+
+    /*oh shit*/
+    // 未登录首页
+    $pf.on("mouseenter",function(e){
+        pfmenuloaded=!!$pfmenu;
+        $curpf=$(this);
+        $u=$(this).parent();
+
+        e.stopPropagation();
+        e.preventDefault();
+        // 将箭头放到menu里,0409,by jn
+        //addpfArrow();
+        if(!pfmenuloaded){
+            addPfDom();
+            pfmenuloaded = 1;
+            $pfmenu.show().hover(function(){
+                showpfmenu();
+            },function(){
+                hidepfmenu();
+            });
+        }
+        $('.usermenu') && $('.usermenu').hide();
+        showpfmenu();
+        if(bds && bds.comm && bds.comm.ishome && bds.comm.skin){
+            // 首页右上角增加换肤引导,显示四次消失.
+            var guideOutTimes = Cookie.get("H_PS_SKIN_GO") || "0";
+            Cookie.set("H_PS_SKIN_GO", parseInt(guideOutTimes)+4, document.domain, '/', new Date(new Date().getTime()+ 86400000 * 60));
+            $(".frontpage-rt-guide").hide();
+
+            // 设置菜单换肤红点,显示四次消失.
+            // 红点当前现实次数
+            var guideInTimes = Cookie.get("H_PS_SKIN_GI") || "0";
+            // 当红点没有现实过,或显示次数多余4次,隐藏红点
+            if(guideInTimes && parseInt(guideInTimes) > 3){
+                $(".bdpfmenu .c-icon-reddot").hide();
+            }else{
+                Cookie.set("H_PS_SKIN_GI", parseInt(guideInTimes)+1, document.domain, '/', new Date(new Date().getTime()+ 86400000 * 60));
+            }
+        }
+        if ($('.set-result-tts').length !== 0) {
+            c({
+                'rsv_ct': '2',
+                'rsv_cst': '1',
+            });
+        }
+    }).on("mouseleave",function(){
+        hidepfmenu();
+    });
+
+    var vanishtime = 200;
+    var timer1,timer2;
+    var timer3;
+    var isNode = bds.comm.isNode || 0;
+    function clearTimer(){
+        timer1 && clearTimeout(timer1);
+        timer2 && clearTimeout(timer2);
+        timer3 && clearTimeout(timer3);
+    }
+
+    // 增加容错处理
+    var homepageTts = (bds && bds.comm && bds.comm.personalData && bds.comm.personalData.homepageTTS && (bds.comm.personalData.homepageTTS.value === '' || bds.comm.personalData.homepageTTS.value === '1')) ? 1 : 0;
+    if (isNode) {
+        homepageTts = (s_session && s_session.userTips && s_session.userTips.homepageTTS && (s_session.userTips.homepageTTS === '' || s_session.userTips.homepageTTS === '1')) ? 1 : 0;
+    }
+    if (homepageTts) {
+        // 显示关闭播报
+        $('.set-close-homepage-tts').css({
+            display: 'inline-block',
+        });
+        $('.set-open-homepage-tts').css({
+            display: 'none',
+        });
+    } else {
+        // 显示开启播报
+        $('.set-close-homepage-tts').css({
+            display: 'none',
+        });
+        $('.set-open-homepage-tts').css({
+            display: 'inline-block',
+        });
+    }
+
+    // super menu显示
+    function showSuperPfMenu(menu, target) {   
+        var rightBtnWidth = 56;
+        if (bds.comm.username) {
+            rightBtnWidth += $('#s-top-username').width();
+        } else {
+            rightBtnWidth += $('#s-top-loginbtn').width();
+        }
+        var pos = rightBtnWidth - (menu.width() - target.width()) / 2;
+        menu.css({
+            display: 'block',
+            right: pos
+        });
+
+        $('#s-user-name-menu').hide();
+        clearTimer();
+    }
+    // super menu隐藏
+    function hideSuperPfMenu(menu) {
+        timer3 = setTimeout(function() {
+            menu.hide();
+        }, vanishtime);
+    }
+
+    function showpfmenu(){
+        var offset=$curpf.offset();
+        var height=$curpf.height();
+        var rightBtnWidth = 48;
+        if (bds.comm.username) {
+            rightBtnWidth += $('.username').width();
+        } else {
+            rightBtnWidth += $('.lb[name=tj_login]').width();
+        }
+        var pos = rightBtnWidth - ($pfmenu.width() - $curpf.width()) / 2;
+        if(bds.comm.ishome){
+            $pfmenu && $pfmenu.css({left:offset.left-20,'top':offset.top + height + 5});
+        }else{
+            $pfmenu && $pfmenu.css({right: pos - 4,'top': 48});
+        }
+
+        // 将箭头放到menu里,0409,by jn
+        //$arrowpf && $arrowpf.css({left:offset.left,'top':offset.top+18});
+
+        $pfmenu && $pfmenu.show();
+        // 将箭头放到menu里,0409,by jn
+        //$arrowpf && $arrowpf.show();
+
+
+        $usermenu && $usermenu.hide();
+        $arrowusermenu && $arrowusermenu.hide();
+
+        $curpf.addClass("pfhover");
+        clearTimer(timer1);
+    }
+    function hidepfmenu(){
+        timer1 = setTimeout(function(){
+            $pfmenu && $pfmenu.hide();
+            // 将箭头放到menu里,0409,by jn
+            //$arrowpf && $arrowpf.hide();
+            $curpf && $curpf.removeClass("pfhover");
+        },vanishtime);
+    }
+    /*oh shit*/
+
+    function hideAll(){
+        // 将箭头放到menu里,0409,by jn
+        //$arrowpf && $arrowpf.hide();
+        $arrowusermenu && $arrowusermenu.hide();
+        $pfmenu && $pfmenu.hide();
+        $usermenu && $usermenu.hide();
+    }
+
+    // 将箭头放到menu里,0409,by jn
+    /*
+    function addpfArrow(){
+        if(!pfmenuloaded){
+            $arrowpf = $("<div>",{"class":"bdnuarrow bdpfarrow"});
+            $arrowpf.appendTo($wrapper);
+        }
+    }
+    */
+    function showSurvey(callback){
+        var surveycss =  '<style>'+
+            '#surveywrapper{width:540px;height:350px;background:#fff;position:fixed;margin:180px 0 0 -270px;font-size:13px;z-index:491;padding:18px;top:0;left:50%;}'+
+            '#surveywrapper form{margin:15px 0 0 42px;}'+
+            '#surveywrapper .c-icon-close{position:absolute;top:12px;right:18px;cursor:pointer;}'+
+            '#surveywrapper .title{font-size:16px;height:30px;}'+
+            '#surveywrapper .row,#surveywrapper h5{height:30px;}'+
+            '#surveywrapper h5{margin:5px 0 0 0;height:30px;font-size:13px;}'+
+            '#surveywrapper iframe{height:0;width:0;padding:0;margin:0;border:none;}'+
+            '#surveywrapper textarea{width:420px;height:60px}'+
+            '#surveywrapper .s_btn{background-image: none;width: 100px; height: 34px; color: white; letter-spacing: 1px; background: #3385ff; border-bottom: 1px solid #2d78f4; outline: medium;}'+
+            '#surveywrapper .btn{margin-top:13px;}'+
+            '</style>';
+        var surveyhtml = surveycss + '<div id="surveywrapper"><h3>用户调查</h3><i class="c-icon c-icon-close"></i>'+
+            '<form target="survey_iframe" method="post" action="http://f3.baidu.com/index.php/feedback/zx/bdis">'+
+            '<div class="title">您关闭即输即得的理由是什么？</div>'+
+            '<div class="row"><label><input type="radio" name="reason" value="1" checked />太难用了，不习惯</label></div>'+
+            '<div class="row"><label><input type="radio" name="reason" value="2" />预测老出错，打扰我搜索</label></div>'+
+            '<div class="row"><label><input type="radio" name="reason" value="3" />速度太慢了，半天没响应</label></div>'+
+            '<div class="row"><label><input type="radio" name="reason" value="4" />页面有错误，根本没法搜</label></div>'+
+            '<h5>其他理由</h5>'+
+            '<textarea name="text"></textarea>'+
+            '<div class="btn"><input type="submit" value="提交" class="s_btn"></div>'+
+            '<input type="hidden" name="baiduid" value="'+escapeHTML(Cookie.get("BAIDUID"))+'"/>'+
+            '<input type="hidden" name="url" value="'+escapeHTML( __get$(__get$Loc(location),"href") )+'"/>'+
+            '<input type="hidden" name="useragent" value="'+escapeHTML(navigator.userAgent)+'"/>'+
+            '</form>'+
+            '<iframe width="100" height="30" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" name="survey_iframe"></iframe>'+
+            '</div>';
+        var mask,maskAdd=false;
+        var body=$("body");
+        function addMask(){
+            if(!mask){
+                mask=$("<div id='_mask'/>").css({'opacity':0.3,'position':'absolute','background':'#000','z-index':490,'top':0,'left':0});
+            }
+            if(!maskAdd){
+                maskAdd=true;
+                var w=$(window);
+                mask.width(Math.max(w.width(),body.width()));
+                mask.height(Math.max(w.height(),body.height()));
+                mask.appendTo(body);
+            }
+        }
+        function removeMask(){
+            if(mask&&maskAdd){
+                maskAdd=false;
+                mask.remove();
+            }
+        }
+        var survey;
+        function addSurvey(){
+            addMask();
+            survey=$(surveyhtml).appendTo(body);
+            survey.delegate(".c-icon-close","click",function(){
+                removeMask();
+                survey.remove();
+                return false;
+            });
+            survey.delegate("form","submit",function(){
+                survey.find("iframe").on("load",function(){
+                    callback();
+                });
+                setTimeout(callback,1000);
+                //return false;
+            });
+        }
+        addSurvey();
+    };
+
+    /**
+     * 加载instant.js
+     * 并触发回调
+    */
+    var loadInstant = function (options) {
+        var callback = options.callback;
+        var status = loadInstant.status;
+
+        if ($.isFunction(callback)) {
+            loadInstant.callbacklist.push(callback);
+        };
+
+        if (status === "pendding") {
+            return;
+        } else if (status === "loaded") {
+            if (loadInstant.callbacklist.length > 0) {
+                for (var i = 0,len = loadInstant.callbacklist.length;i < len;i++) {
+                     __call$(loadInstant.callbacklist,i,[]) ;
+                };
+                loadInstant.callbacklist = [];
+            };
+            return;
+        };
+
+        loadInstant.status = "pendding";
+
+        $.ajax({
+            "dataType": "script",
+            "cache": true,
+            "url":"http://pss.bdstatic.com/r/www/cache/static/home/js/instant_0ab0e7b.js",
+            "success": function (res) {
+                if (loadInstant.callbacklist.length > 0) {
+                    for (var i = 0,len = loadInstant.callbacklist.length;i < len;i++) {
+                         __call$(loadInstant.callbacklist,i,[]) ;
+                    };
+                    loadInstant.callbacklist = [];
+                };
+                loadInstant.status = "loaded";
+                if(bds && bds.comm && bds.comm.ishome && bds.comm.skin){
+                    // 设置菜单换肤红点,显示四次消失.
+                    var guideInTimes = Cookie.get("H_PS_SKIN_GI") || "0";
+                    Cookie.set("H_PS_SKIN_GI", parseInt(guideInTimes)+4, document.domain, '/', new Date(new Date().getTime()+ 86400000*60));
+
+                }
+            }
+        });
+    };
+
+    loadInstant.callbacklist = [];
+    loadInstant.status = "ready";
+
+    /**
+     * 绑定事件，触发loadInstant
+    **/
+    if (bds.event) {
+        bds.event.on('bd.se.loadpanel',function (opt) {
+            var data = opt.data;
+            loadInstant({
+                'callback': function () {
+                    bds.event.trigger('bd.se.showpanel',data);
+                }
+            })
+        })
+    };
+
+    /**
+     * 重构addPfDom方法
+     * 该方法的主要功能
+     * 1.渲染"设置"菜单
+     * 2.挂载"设置"菜单中的点击事件
+     */
+    var $pfmenu;
+    function addPfDom() {
+        var $linkpref = $("<a class='setpref first' href='javascript:;'><span class='set'>搜索设置</span></a>"),   // 搜索设置
+            $linkfrontpage, // 首页设置
+            $linkadv, // 高级搜索
+            $linkHistory,   // 隐私设置
+            $linkissw,      // 开启/关闭 is预测
+            $linkskin,      // 换肤按钮
+            $linkissw,      // 是否开启预测
+            $linkResultTts, // 结果页的tts开关
+            ie=navigator.userAgent.toLowerCase().match(/msie\s+(\d*)/),
+            ie6 = ie && ie[1] == 6,
+            settingList = []; // 列表元素，显示顺序就是数组顺序
+
+        var ua = navigator.userAgent;
+        var isiPad = (Boolean(ua.match(/(iPad)/)) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+        var isIE = (ua.indexOf('compatible') > -1 && ua.indexOf('MSIE') > -1) || document.documentMode;
+        var isBlock = (isiPad || isIE);
+        if (!isBlock) {
+            $linkResultTts = $("<span class='set-result-tts'><a class='set-open-result-tts' href='javascript:;'><span class='set'>开启播报</span></a><a class='set-close-result-tts' href='javascript:;'><span class='set'>关闭播报</span></a></span>")
+        }
+
+        // 设置外壳
+        if (!isSuperNewTopMenu()) {
+            $pfmenu = $('.bdpfmenu');
+            var arrow = '<div class="bdnuarrow"><em></em><i></i></div>';
+            $pfmenu.append(arrow);
+        }
+        
+        // 搜索设置绑定事件
+        // 会触发一个全局的事件，打开设置框
+        $linkpref.on("mousedown",function(){
+            // 点击搜索设置（设置-搜索设置） 
+            setUbcLog('set', 'tj_setting');
+            nsc("tj_setting");
+            return false;
+        });
+
+        $linkpref.on("click",function (e) {
+            e.preventDefault();
+            // 加载instant.js
+            loadInstant({
+                'callback': function () {
+                    bds.event.trigger("bd.se.showpanel",{'tab':'general'});
+                }
+            });
+        });
+
+        // 生成首页设置
+        $linkfrontpage = $("<a class='setpref first' href='javascript:;'><span class='set'>首页设置</span></a>");
+        $linkfrontpage.on("mousedown",function(){
+            return false;
+        });
+        // 触发弹层显示
+        $linkfrontpage.on("click",function(e) {
+            e.preventDefault();
+            // 点击首页设置（设置-首页设置）
+            loadInstant({
+                'callback': function() {
+                    bds.event.trigger("bd.se.showpanel",{'tab':'frontpage'});
+                }
+            });
+        });
+
+
+        // 判断生成高级搜索设置
+        $linkadv = $("<a href='//www.baidu.com/gaoji/advanced.html' target='_blank'><span class='set'>高级搜索</span></a>");
+        $linkadv.on("mousedown",function(){
+            nsc("tj_advsearch");
+            return false;
+        });
+
+        // 触发弹层显示
+        $linkadv.on("click",function(e) {
+            e.preventDefault();
+            // 点击高级搜索（设置-高级搜索）
+            setUbcLog('set', 'tj_advsearch');
+            loadInstant({
+                'callback': function() {
+                    bds.event.trigger("bd.se.showpanel",{'tab':'advanced'});
+                }
+            });
+        });
+        if(bds && bds.comm && bds.comm.ishome && bds.comm.skin){
+            if(!(window.s_domain && window.s_domain.base && window.s_domain.base == 'home')){
+                $linkskin = $("<a href='javascript:' target='_blank'>换肤设置</a>");
+                var guideInTimes = Cookie.get("H_PS_SKIN_GI") || "0";
+                if(!guideInTimes || parseInt(guideInTimes) < 4){
+                    $linkskin.append('<span class="c-icon c-icon-reddot"></span>');
+                }
+
+                // 触发弹层显示
+                $linkskin.on("click",function(e) {
+                    $_this = this;
+                    e.preventDefault();
+                    loadInstant({
+                        'callback': function() {
+                            bds.event.trigger("bd.se.showpanel",{'tab':'skin'});
+                            $(".c-icon-reddot",$_this).hide();
+                        }
+                    });
+                });
+            }
+        }
+
+         // 判断是否应该生成隐私设置
+         if(bds.comm.ishome && window.s_domain && window.s_domain.base && window.s_domain.base == 'home'){
+            $linkHistory = $("<a href='https://www.baidu.com/duty/privacysettings.html' target='_blank'>隐私设置</a>").on("mousedown",function(){
+                nsc("tj_history");
+                return false;
+            });
+            $linkHistory.on("click",function(){
+                // 首页 隐私设置
+                setUbcLog('set', 'tj_history');
+            });
+        } else {
+            $linkHistory = $("<a class='last' href='javascript:;'><span class='set'>隐私设置</span></a>").on("mousedown",function(){
+                nsc("tj_history");
+                return false;
+            });
+            $linkHistory.on("click",function(){
+                // 结果页 隐私设置
+                setUbcLog('set', 'tj_history');
+                if(bds.comm.username){
+                     __set$(__get$Loc(location),"href","https://www.baidu.com/duty/privacysettings.html") ;
+                    return false;
+                }else{
+                    if(bds.se.login && bds.se.login.open){
+                       bds.se.login.open(function(stat, user){
+                           if(stat == 1){
+                                __set$(__get$Loc(location),"href","https://www.baidu.com/duty/privacysettings.html") ;
+                               return false;
+                           }
+                        }, true);
+                    }
+                }
+            });
+        };
+
+        // 判断是否显示开启is预测按钮
+        // 因为实验1和实验3是不会删除cookie的，所以单独排除
+        if((bds.comm.supportis || Cookie.get("ORIGIN")==2) && !(isCloseHomePredict() && bds.comm.ishome)){
+            if(UPS.get("isSwitch")==0){
+                $linkissw=$("<a href='javascript:;'><span class='set'>开启预测</span></a>").click(function(){
+                    // 开启预测
+                    setUbcLog('set', 'tj_predict_open');
+                    UPS.set("isSwitch",1);
+                    UPS.save(function(){
+                         __get$Loc(location) .reload();
+                    });
+                    return false;
+                });
+            }else{
+                $linkissw=$("<a href='javascript:;'><span class='set'>关闭预测</span></a>").click(function(){
+                    // 关闭预测
+                    setUbcLog('set', 'tj_predict_close');
+
+                    //TODO 取消注释，就可以出现反馈窗口
+                    //showSurvey(function(){
+                        UPS.set("isSwitch",0);
+                        UPS.save(function(){
+                             __get$Loc(location) .reload();
+                        });
+                        return false;
+                    //});
+                    //return false;
+                });
+            }
+        };
+
+
+        // 插入元素
+        if(bds && bds.comm && bds.comm.ishome){
+            if (bds.comm.skin) {
+                settingList = [$linkpref,$linkadv,$linkskin,$linkissw,$linkHistory];
+                $(window).on("index_off",function(){
+                    $linkskin.hide();
+                    $("[data-tabid='skin']").hide();
+                });
+            } else {
+                settingList = [$linkpref, $linkadv, $linkissw, $linkHistory];
+            }
+            // 首页设置，增加首页设置菜单
+            settingList.splice(1, 0, $linkfrontpage);
+        } else {
+            // 结果页
+            settingList = [$linkpref, $linkadv, $linkissw, $linkHistory, $linkResultTts];
+        }
+
+        // super首页dom，先清空
+        if (isSuperNewTopMenu()) {
+            var superPfMenu = $('#s-user-setting-menu .s-user-setting-pfmenu');
+            superPfMenu.html();
+        }
+        
+        for (var i = 0,len = settingList.length;i < len;i++) {
+            var settingItem =  __get$(settingList,i) ;
+            if (settingItem) {
+                if (!isSuperNewTopMenu()) {
+                    $pfmenu.append(settingItem);
+                } else {
+                    superPfMenu.append(settingItem);
+                }
+            };
+        };
+
+        // 读取localStorage中的值判断播报状态
+        // 默认为关
+        if (localStorage.getItem('set_result_tts') === 'open') {
+            $('.set-open-result-tts').css({"display": "none"});
+            $('.set-close-result-tts').css({"display": "inline-block"});
+        } else {
+            $('.set-open-result-tts').css({"display": "inline-block"});
+            $('.set-close-result-tts').css({"display": "none"});
+        };
+
+        // 为播报开关按钮绑定相应事件
+        $('.set-open-result-tts').on("click",function (e) {
+            // 点击【开启播报】按钮
+            // 写入localStorage
+            localStorage.setItem("set_result_tts", "open");
+            $('.set-open-result-tts').css({"display": "none"});
+            $('.set-close-result-tts').css({"display": "inline-block"});
+            $('body').addClass('open-result-tts');
+            c({
+                'rsv_ct': '2',
+                'rsv_cst': '2',
+            });
+            setUbcLog('set', 'tj_broadcast_open');
+            // 播报按钮展现打点
+            var numsForBtn = $('.tts').length;
+            c({
+                'rsv_ct': '2',
+                'rsv_cst': '4',
+                'rsv_clk_extra': JSON.stringify({nums: numsForBtn})
+            });
+            require(['@baidu/search-api'], function(searchApi) {
+                searchApi.event.trigger('result.open_tts');
+            });
+            e.preventDefault();
+        });
+        $('.set-close-result-tts').on("click",function (e) {
+            // 点击【关闭播报】按钮
+            // 写入localStorage
+            localStorage.setItem("set_result_tts", "close");
+            $('.set-open-result-tts').css({"display": "inline-block"});
+            $('.set-close-result-tts').css({"display": "none"});
+            $('body').removeClass('open-result-tts');
+            toast('已为您关闭播报');
+            c({
+                'rsv_ct': '2',
+                'rsv_cst': '3',
+            });
+            setUbcLog('set', 'tj_broadcast_close');
+            require(['@baidu/search-api'], function(searchApi) {
+                searchApi.event.trigger('result.close_tts');
+            });
+            e.preventDefault();
+        });
+    };
+});
+
+$(function(){
+    //dom节点
+    var $wrapper = $("#wrapper"),
+        $u = $("#u1"),
+        $bri = $("#u1 .bri");
+
+    var nucssloaded = 0,
+        pfmenuloaded = 0,
+        pfjsloaded = 0,
+        bridomloaded = 0,
+        briscroll,
+        $arrowpf,$arrowbri,$bridom;
+    var briheight,calheight;
+    var time = 70;
+
+    function nsc(name){
+        var reg = new RegExp('^\\s+|\\s+\x24'),
+            key =  __call$($("#kw").get(0).value,"replace",[reg,'']) ;
+
+        ns_c({
+            'fm': 'behs',
+            'tab': name,
+            'query': encodeURIComponent(key),
+            'un': encodeURIComponent(bds.comm.user || '')
+        });
+    };
+
+    //渲染皮肤
+
+(function(){
+        if(bds && bds.comm && bds.comm.ishome && bds.comm.skin){
+            if(!(window.s_domain && window.s_domain.base && window.s_domain.base == 'home')){
+                var skinName = (Cookie.get("H_PS_SKIN") ? Cookie.get("H_PS_SKIN") : "0");
+                var guideOutTimes = Cookie.get("H_PS_SKIN_GO") || "0";
+                if(!guideOutTimes || parseInt(guideOutTimes) < 4){
+                    $skinGuide = $("<div>",{"class":"frontpage-rt-guide"});
+                    ns_c({"tj_skinChangeTip":"skin_tip_show"});
+                    $skinGuide.appendTo('#wrapper');
+                    Cookie.set("H_PS_SKIN_GO", parseInt(guideOutTimes)+1, document.domain, '/', new Date(new Date().getTime()+ 86400000 * 60));
+                }
+                if(skinName && skinName != "0"){
+                    var _skindoms = $(".s-skin-container");
+                    var _imgurl = "http://"+ ((parseInt(skinName) + 1) % 8 + 1) + ".su.bdimg.com/" + "skin/" + skinName + ".jpg?2";
+                    _imgurl = bds.util.domain && bds.util.domain.get ? bds.util.domain.get(_imgurl):_imgurl;
+                    var userAgent=(navigator&&navigator.userAgent)?navigator.userAgent:"";
+                            if(userAgent.match(/(msie [2-8])/i)){
+                                if(_skindoms.find('img')[0]){
+                                        $(_skindoms[0]).attr('style', 'background-color:#aaa;').find('img').attr('src', _imgurl);
+                                }else{
+                                        $(_skindoms[0]).attr('style', 'background-color:#aaa;').html('<div class="topbanner"></div><img style="top:0;left:0;width:100%;position:fixed" src="' + _imgurl + '">');
+                                }
+                            }else{
+                                $(_skindoms[0]).attr('style', 'background-color:#aaa;background-image:url("' + _imgurl + '");');
+                                $(_skindoms[0]).find('img').remove();
+                            }
+                }
+            }
+            $(window).on("index_off",function(){
+                $('#head').removeClass('s-skin-hasbg').addClass('skin-no-bg');
+                $('#ftCon').removeClass('s-skin-hasbg').addClass('skin-no-bg');
+                $('.s-skin-container').hide();
+                var $logo = $("#lg img").val(0);
+                $logo.attr("src","//www.baidu.com/img/bd_logo1.png");
+            });
+        }
+})();
+    //事件处理
+    $(document).on("click",function(){
+        hideAll();
+    });
+
+    $("#kw").on("click",function(){
+        hideAll();
+    });
+
+    $bri.on("click",function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        // addbriArrow();
+        // if(!bridomloaded){
+        //     addBriDom();
+        //     bridomloaded = 1;
+        //     $bridom.fadeIn(time);
+        //     $arrowbri.fadeIn(time);
+        // }else{
+        //     if($bridom.is(":hidden")){
+        //         var $bdbrimore = $bridom.find(".bdbrimore");
+        //         var $briscrollwrapper = $bridom.find(".briscrollwrapper");
+        //         var $briscroll = $bridom.find(".bdbriscroll-ctrl-scroll");
+        //         $bridom.css({"display":"block","opacity":"0"});
+        //         $bdbrimore && $bdbrimore.removeClass("bdbriexpand");
+        //         $briscrollwrapper && $briscrollwrapper.scrollTop(0);
+        //         $briscroll && $briscroll.hide();
+        //         $bridom.css({"display":"none","opacity":"1"}).fadeIn(time);
+        //         $arrowbri.fadeIn(time);
+        //     }else{
+        //         $bridom && $bridom.hide();
+        //         $arrowbri.hide();
+        //     }
+        // }
+        // $pfmenu && $pfmenu.hide();
+        return false;
+    });
+
+    var vanishtime = 100;
+    var timer1,timer2;
+    /*oh shit*/
+    $bri.on("mouseover",function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        addbriArrow();
+        if(!bridomloaded){
+            addBriDom();
+            bridomloaded = 1;
+            $bridom.hover(function(){
+                clearTimer(timer2);
+                //showbridom();
+            },function(){
+                hidebridom();
+            });
+            $arrowbri.hover(function(){
+                //showbridom();
+            },function(){
+                hidebridom();
+            });
+        }
+        showbridom();
+    }).on("mouseout",function(){
+        //hidebridom();
+    });
+
+    $(window).on("index_off",function(){
+        $bridom && $bridom.hide();
+        $arrowbri && $arrowbri.hide();
+    });
+    function clearTimer(){
+        timer1 && clearTimeout(timer1);
+        timer2 && clearTimeout(timer2);
+    }
+    function showbridom(){
+        var $briguide = $(".briguide");
+        $briguide && $briguide.hide();
+        if($bridom){
+            $bridom.css({"display":"block","opacity":"0","min-height":calheight});
+            if('undefined' == typeof(document.body.style.maxHeight)){
+                $bridom.css({"height":calheight});
+            }
+            //$bridom.animate({"opacity":1},vanishtime);
+            $bridom.find(".briscrollwrapper").scrollTop(0);
+            $bridom.css({"display":"none","opacity":"1"}).fadeIn(vanishtime);
+        }
+        //$bri.addClass("brihover");
+        //$bri.fadeOut(vanishtime);
+        // 将箭头放到menu里,0409,by jn
+        //$arrowpf && $arrowpf.hide();
+        $arrowbri && $arrowbri.show();
+        briscroll && briscroll.render($(window).height() - $bri.offset().top - 34 - 20);
+        clearTimer(timer2);
+    }
+    function hidebridom(){
+        timer2 = setTimeout(function(){
+            $bridom && $bridom.fadeOut(vanishtime);
+            $arrowbri && $arrowbri.hide();
+            //$bri.removeClass("brihover");
+            //$bri.fadeIn(vanishtime);
+        },vanishtime);
+    };
+
+    /*oh shit*/
+    function hideAll(){
+        // 将箭头放到menu里,0409,by jn
+        //$arrowpf && $arrowpf.hide();
+        $arrowbri && $arrowbri.hide();
+        $bridom && $bridom.hide();
+    }
+
+    // 将箭头放到menu里,0409,by jn
+    /*
+    function addpfArrow(){
+        if(!pfmenuloaded){
+            $arrowpf = $("<div>",{"class":"bdnuarrow bdpfarrow"});
+            $arrowpf.appendTo($u);
+        }
+    }
+    */
+    function addbriArrow(){
+        if(!bridomloaded){
+            $arrowbri = $("<div>",{"class":"bdnuarrow bdbriarrow"});
+            $arrowbri.appendTo($u);
+        }
+    }
+
+
+    function addBriDom(){
+        $bridom = $("<div>",{"class":"bdbri"}).appendTo($('.head_wrapper'));
+        $bridom.on("click",function(e){e.stopPropagation()});
+
+        if($u.hasClass('bdbrilink')){
+            //链接版
+            //$bridom.addClass("bdbrilink").html("<div class='bdmainlink'><a href='http://news.baidu.com' name='tj_news'>新闻</a><a href='http://www.baidu.com' name='tj_web'>网页</a><a href='http://tieba.baidu.com' class='bdmainlinkr' name='tj_tieba'>贴吧</a><a href='http://image.baidu.com' name='tj_img'>图片</a><a href='http://v.baidu.com' name='tj_video'>视频</a><a href='http://music.taihe.com' class='bdmainlinkr' name='tj_mp3'>音乐</a><a href='http://zhidao.baidu.com' name='tj_zhidao'>知道</a><a href='http://map.baidu.com' name='tj_map'>地图</a><a href='http://www.hao123.com' class='bdmainlinkr' name='tj_hao123'>hao123</a><a href='http://wenku.baidu.com' name='tj_wenku'>文库</a><a href='http://baike.baidu.com' name='tj_baike'>百科</a><a href='http://yun.baidu.com' class='bdmainlinkr' name='tj_yun'>百度云</a></div><div class='bdothlink'><div class='bdothlinktitle' name='tj_others'>其他产品：</div><span><a href='http://tuan.baidu.com' name='tj_tuangou'>百度团购</a></span><span><a href='http://xiangce.baidu.com' name='tj_xiangce'>百度相册</a></span><span class='bdothlinkr'><a href='http://lvyou.baidu.com' name='tj_lvyou'>百度旅游</a></span><span><a href='http://weishi.baidu.com' name='tj_weishi'>百度卫士<i class='bdbrihoticon briiconsbg'></i></a></span><span><a href='http://shadu.baidu.com' name='tj_shadu'>百度杀毒</a></span><span class='bdothlinkr'><a href='http://8.baidu.com' name='tj_licai'>百度理财<i class='bdbrinewicon briiconsbg'></i></a></span><div class='bdothlinkmore'><a href='//www.baidu.com/more/' name='tj_more'>查看百度全部产品&gt;&gt;</a></div></div>");
+        }else{
+            //图片版
+            /*
+            var logourlpre19 = __uri("../../../static/home/img/logos/nuomi.png");
+            var logourlpre20 = __uri("../../../static/home/img/logos/zhidao.png");
+            var logourlpre21 = __uri("../../../static/home/img/logos/music.png");
+            var logourlpre22 = __uri("../../../static/home/img/logos/image.png");
+            var logourlpre24 = __uri("../../../static/home/img/logos/wenku.png");
+            var logourlpre25 = __uri("../../../static/home/img/logos/fengyunbang.png");
+            var logourlpre26 = __uri("../../../static/home/img/logos/tuiguang.png");
+            */
+            if($(".mnav_nuomi").length){
+            $bridom.addClass("bdbriimg").html("<div class='bdmainlink'><div class='bdbriimgtitle'>更多产品</div><div class='briscrollwrapperContainer'><div class='briscrollwrapper'><div class='bdbriwrapper'><a href='http://zhidao.baidu.com' name='tj_zhidao'><span class='bdbriimgitem_2'></span>知道</a><a href='http://music.taihe.com' name='tj_mp3'><span class='bdbriimgitem_3'></span>音乐</a><a href='http://image.baidu.com' name='tj_img'><span class='bdbriimgitem_4'></span>图片</a><a href='http://wenku.baidu.com' name='tj_wenku'><span class='bdbriimgitem_5'></span>文库</a><a href='http://top.baidu.com' name='tj_bang'><span class='bdbriimgitem_6'></span>风云榜</a><a href='http://e.baidu.com/?refer=888' name='tj_tuiguang'><span class='bdbriimgitem_7'></span>百度推广</a><div class='bdbrievenmore'><a href='//www.baidu.com/more/' name='tj_more'>全部产品&gt;&gt;</a></div></div></div></div></div>");
+            }else{
+                if (window._sam_ns_nuomi == 1) {
+                    $bridom.addClass("bdbriimg").html("<div class='bdmainlink'><div class='bdbriimgtitle'>更多产品</div><div class='briscrollwrapperContainer'><div class='briscrollwrapper'><div class='bdbriwrapper'><a href='https://www.hao123.com' name='tj_hao123'><span class='bdbriimgitem_hao123'></span>hao123</a><a href='http://music.taihe.com' name='tj_mp3'><span class='bdbriimgitem_3'></span>音乐</a><a href='http://image.baidu.com' name='tj_img'><span class='bdbriimgitem_4'></span>图片</a><a href='http://zhidao.baidu.com' name='tj_zhidao'><span class='bdbriimgitem_2'></span>知道</a><a href='http://wenku.baidu.com' name='tj_wenku'><span class='bdbriimgitem_5'></span>文库</a><a href='http://top.baidu.com' name='tj_bang'><span class='bdbriimgitem_6'></span>风云榜</a><a href='http://e.baidu.com/?refer=888' name='tj_tuiguang'><span class='bdbriimgitem_7'></span>百度推广</a><div class='bdbrievenmore'><a href='//www.baidu.com/more/' name='tj_more'>全部产品&gt;&gt;</a></div></div></div></div></div>");
+                } else if (window._sam_ns_nuomi == 2) {
+                    $bridom.addClass("bdbriimg").html("<div class='bdmainlink'><div class='bdbriimgtitle'>更多产品</div><div class='briscrollwrapperContainer'><div class='briscrollwrapper'><div class='bdbriwrapper'><a href='http://v.baidu.com' name='tj_video'><span class='bdbriimgitem_video'></span>视频</a><a href='http://music.taihe.com' name='tj_mp3'><span class='bdbriimgitem_3'></span>音乐</a><a href='http://image.baidu.com' name='tj_img'><span class='bdbriimgitem_4'></span>图片</a><a href='http://zhidao.baidu.com' name='tj_zhidao'><span class='bdbriimgitem_2'></span>知道</a><a href='http://wenku.baidu.com' name='tj_wenku'><span class='bdbriimgitem_5'></span>文库</a><a href='http://top.baidu.com' name='tj_bang'><span class='bdbriimgitem_6'></span>风云榜</a><a href='http://e.baidu.com/?refer=888' name='tj_tuiguang'><span class='bdbriimgitem_7'></span>百度推广</a><div class='bdbrievenmore'><a href='//www.baidu.com/more/' name='tj_more'>全部产品&gt;&gt;</a></div></div></div></div></div>");
+                } else if (window._sam_ns_nuomi == 3) {
+                    $bridom.addClass("bdbriimg").html("<div class='bdmainlink'><div class='bdbriimgtitle'>更多产品</div><div class='briscrollwrapperContainer'><div class='briscrollwrapper'><div class='bdbriwrapper'><a href='http://e.baidu.com?refer=889' name='tj_yingxiao'><span class='bdbriimgitem_1'></span>百度营销</a><a href='http://zhidao.baidu.com' name='tj_zhidao'><span class='bdbriimgitem_2'></span>知道</a><a href='http://music.taihe.com' name='tj_mp3'><span class='bdbriimgitem_3'></span>音乐</a><a href='http://image.baidu.com' name='tj_img'><span class='bdbriimgitem_4'></span>图片</a><a href='http://wenku.baidu.com' name='tj_wenku'><span class='bdbriimgitem_5'></span>文库</a><a href='http://top.baidu.com' name='tj_bang'><span class='bdbriimgitem_6'></span>风云榜</a><div class='bdbrievenmore'><a href='//www.baidu.com/more/' name='tj_more'>全部产品&gt;&gt;</a></div></div></div></div></div>");
+                } else {
+                    $bridom.addClass("bdbriimg").html("<div class='bdmainlink'><div class='bdbriimgtitle'>更多产品</div><div class='briscrollwrapperContainer'><div class='briscrollwrapper'><div class='bdbriwrapper'><a href='http://e.baidu.com?refer=889' name='tj_yingxiao'><span class='bdbriimgitem_1'></span>百度营销</a><a href='http://music.taihe.com' name='tj_mp3'><span class='bdbriimgitem_3'></span>音乐</a><a href='http://image.baidu.com' name='tj_img'><span class='bdbriimgitem_4'></span>图片</a><a href='http://zhidao.baidu.com' name='tj_zhidao'><span class='bdbriimgitem_2'></span>知道</a><a href='http://wenku.baidu.com' name='tj_wenku'><span class='bdbriimgitem_5'></span>文库</a><a href='http://top.baidu.com' name='tj_bang'><span class='bdbriimgitem_6'></span>风云榜</a><div class='bdbrievenmore'><a href='//www.baidu.com/more/' name='tj_more'>全部产品&gt;&gt;</a></div></div></div></div></div>");
+                };
+
+            }
+            //事件处理
+            //var $bdbrimore = $bridom.find(".bdbrimore");
+            var $bdothlink = $bridom.find(".bdothlink");
+            var $bdbrievenmore = $bridom.find(".bdbrievenmore");
+            var $briscrollwrapper = $bridom.find(".briscrollwrapper");
+            var firsttime = 1;
+
+            function expand(){
+                //$bdbrimore.addClass("bdbriexpand");
+                $briscrollwrapper.animate({
+                    "scrollTop" : $bridom.height()
+                },time*5,"swing",function(){
+                    firsttime = 0;
+                    $bridom.find(".bdbriscroll-ctrl-scroll").fadeIn(time);
+                });
+            }
+
+            function scrollbarv(options){
+                var me = this;
+                this.options = options;
+                var scrollbar = options.scrollbar || $('<div>').get(0),
+                    content = options.content,
+                    cont = $(options.content).children().get(0),
+                    initPos = options.initPos || 0,
+                    initDom = options.initDom || null,
+                    mousewheel = options.mousewheel || true,
+                    mousewheellock = options.mousewheellock || false,
+                    wheeldelta = options.wheeldelta || 1,
+                    ctrlblock = options.ctrlblock || 0,
+                    step = options.step || 0.1,
+                    length = options.length,
+                    scale = options.scale || 0,
+                    theme = options.theme || '',
+                    refresh = options.refresh || false;
+
+                var conth = 0,
+                    contenth = 0,
+                    scrollbarh = 0,
+
+                    scrollCallback = function(pos){
+                        var scrollTotal = parseInt(conth - contenth);
+                        if(scrollTotal > 0){
+                            var pos = pos.value;
+                            content.scrollTop = scrollTotal*pos;
+                        }
+                    },
+
+                    upCtrl = $('<div>',{'class':'bdbriscroll-up'}).get(0),
+                    downCtrl = $('<div>',{'class':'bdbriscroll-down'}).get(0),
+                    axis = $('<div>',{'class':'bdbriscroll-axis'}).get(0),
+                    slider = $('<div>',{'class':'bdbriscroll-slider OP_LOG_BTN'}).get(0),
+                    slider_top = $('<div>',{'class':'bdbriscroll-s-top'}).get(0),
+                    slider_bottom = $('<div>',{'class':'bdbriscroll-s-bottom'}).get(0),
+                    slider_block = $('<div>',{'class':'bdbriscroll-s-block'}).get(0),
+                    globalHeight = 0,
+                    ctrlHeight = ctrlblock || 0,
+                    sliderHeight = 0,
+                    topPos = ctrlHeight,
+                    bottomPos = 0,
+                    scrollValue = 0,
+                    dragY = 0,
+                    dragging = 0,
+                    docSelec = null,
+                    circleTimer = null,
+                    upControlTimer,
+                    downCtrlTimer,
+                    timer;
+                var _recover = function(){isUpControlMouseDown = false; isDownControlMouseDown = false;};
+
+                //如果未传入scrollbar节点，则在内容节点后添加
+                if(!options.scrollbar){
+                    $(content).after($(scrollbar));
+                }
+                $(content).addClass('bdbriscroll-ctrl-content');
+                $(scrollbar).addClass('bdbriscroll-ctrl-scroll');
+                $(scrollbar).attr('data-click','{fm:"beha"}');
+
+                //根据opt调整高度及scale，传入len(可选)改变globalHeight
+                this.render = function(len){
+                    if(!refresh){
+                        clearInterval(timer);
+                    }
+                    try{
+                        contenth = content.offsetHeight;
+                        scrollbarh = scrollbar.offsetHeight;
+                        conth = cont.offsetHeight;
+                    }catch(e){}
+
+                    //全局高度等于render参数，或者初始化时的length参数，或者计算出的内容框高度减去边框2px
+                    globalHeight = len || length || contenth-22;
+
+                    $(scrollbar).css({'height':(globalHeight + 'px')});
+                    $(axis).css({'height':(globalHeight + 'px')});
+
+                    if(globalHeight>=0 && conth>=0){
+                        if(conth<=globalHeight+22){
+                            $(scrollbar).hide();
+                        }else{
+                            $(scrollbar).show();
+                        }
+                        if(scale != (conth / globalHeight)){
+                            scale = conth / globalHeight;
+                            updateScale(scale);
+                            //滚动到之前的位置
+                            scrollToPos(0);
+                        }
+                        //设置滑块位置
+                        var scrollRange = 0;
+                        //定义了初始位置
+                        if(initDom){
+                            if(initDom.offsetTop + initDom.scrollHeight >= conth){
+                                scrollRange = 1;
+                            }else if(initDom.offsetTop + initDom.scrollHeight <= contenth){
+                                scrollRange = 0;
+                            }else{
+                                scrollRange = initDom.offsetTop/conth;
+                            }
+                            scrollToPos(scrollRange);
+                            var cy = between(scrollbarh*scrollRange,topPos);
+                            if(cy > globalHeight - sliderHeight){
+                                cy = globalHeight - sliderHeight
+                            }
+                        }
+                        //定义了初始位置
+                        if(initPos){
+                            scrollToPos(initPos);
+                            var cy = between(scrollbarh*initPos,topPos);
+                            if(cy > globalHeight - sliderHeight){
+                                cy = globalHeight - sliderHeight
+                            }
+                        }
+                    }
+                }
+
+                //循环渲染
+                timer = setInterval(this.render,50);
+
+                $(scrollbar).empty();
+                if(ctrlblock && upCtrl.offsetHeight == downCtrl.offsetHeight){
+                    var isUpControlMouseDown = false;
+                    var isDownControlMouseDown = false;
+                    scrollbar.appendChild(upCtrl);
+                    scrollbar.appendChild(downCtrl);
+                    $(upCtrl).on('mousedown',function(){scrollUpClick();isUpControlMouseDown = true;});
+                    $(downCtrl).on('mousedown',function(){scrollDownClick();isDownControlMouseDown = true;});
+                    $(upCtrl).on('mouseup',function(){
+                        $(scrollbar).removeClass('bdbriscroll-ctrl-scroll-touch');
+                        isUpControlMouseDown = false;
+                    });
+                    $(downCtrl).on('mouseup',function(){
+                        $(scrollbar).removeClass('bdbriscroll-ctrl-scroll-touch');
+                        isDownControlMouseDown = false;
+                    });
+                    $(document).on("mouseup",_recover);
+                }
+
+                scrollbar.appendChild(axis);
+                scrollbar.appendChild(slider);
+                slider.appendChild(slider_top);
+                slider.appendChild(slider_bottom);
+                slider.appendChild(slider_block);
+
+                //滑块初始化
+                slider.onDragstart = function(){
+                    return false;
+                };
+                //绑定事件
+                $(slider).on('mouseover',function(){$(slider).addClass('bdbriscroll-slider-hover');$(scrollbar).addClass('bdbriscroll-ctrl-scroll-hover')});
+                $(slider).on('mousedown',function(){$(slider).addClass('bdbriscroll-slider-touch');$(scrollbar).addClass('bdbriscroll-ctrl-scroll-touch')});
+                $(slider).on('mouseout',function(){$(slider).removeClass('bdbriscroll-slider-hover')});
+                $(slider).on('mouseup',function(){$(slider).removeClass('bdbriscroll-slider-touch')});
+
+                $(scrollbar).on('mouseover',function(){$(scrollbar).addClass('bdbriscroll-ctrl-scroll-hover')});
+                $(scrollbar).on('mousedown',function(){$(scrollbar).addClass('bdbriscroll-ctrl-scroll-touch')});
+                $(scrollbar).on('mouseout',function(){$(scrollbar).removeClass('bdbriscroll-ctrl-scroll-hover')});
+                $(scrollbar).on('mouseup',function(){$(scrollbar).removeClass('bdbriscroll-ctrl-scroll-touch')});
+
+                $(axis).on('click',scrollClick);
+                if(mousewheel && !this.onwheel){
+                    if(!$(content).hasClass('bdbriscroll-onwheel')){
+                        $(content).on('DOMMouseScroll',scrollwheel);
+                        $(content).on('mousewheel',scrollwheel);
+                        $(content).addClass('bdbriscroll-onwheel');
+                    }
+                }
+
+                //绑定滚动事件
+                if(content){
+                    $(content).on('scroll',function(){
+                        if(!dragging){
+                            scrollToPos(content.scrollTop/(content.scrollHeight-content.offsetHeight),1);
+                        }
+                    })
+                }
+
+                //绑定点击事件
+                $(slider).on('mousedown',function(e){
+                    docSelec = document.onselectstart;
+                    document.onselectstart = function(){
+                        return false;
+                    };
+                    circleTimer = window.setInterval(notify,40);
+                    $(cont).css({'-moz-user-select':'none'});
+                    $(cont).css({'-webkit-user-select':'none'});
+                    dragY = e.clientY - slider.offsetTop;
+                    $(document).on('mousemove',handleMouseMove);
+                    $(document).on('mouseup',handleMouseUp);
+                    dragging = 1;
+                    e.preventDefault();
+                    return false;
+                });
+
+                function between(v,min,max){
+                    if(max) v = v>max?max:v;
+                    return v>=min?v:min;
+                }
+
+                function notify(){
+                    scrollCallback.call(window,{'value':scrollValue,'scale':scale});
+                }
+
+                function scrollUpClick(){
+                    if(upControlTimer) clearInterval(upControlTimer);
+                    scrollUp();
+                    upControlTimer = setInterval(function(){
+                        if(isUpControlMouseDown){
+                            scrollUp();
+                        }else{
+                            clearInterval(upControlTimer);
+                        }
+                    }, 100);
+                }
+                function scrollDownClick(){
+                    if(downCtrlTimer) clearInterval(downCtrlTimer);
+                    scrollDown();
+                    downCtrlTimer= setInterval(function(){
+                        if(isDownControlMouseDown){
+                            scrollDown();
+                        }else{
+                            clearInterval(downCtrlTimer);
+                        }
+                    }, 100);
+                }
+                function scrollUp(){
+                    var pos = scrollValue - step;
+                    pos = (pos < 0) ? 0 : pos;
+                    scrollToPos(pos);
+                }
+                function scrollDown(){
+                    var pos = scrollValue + step;
+                    pos = (pos > 1) ? 1 : pos;
+                    scrollToPos(pos);
+                }
+
+                //处理鼠标移动
+                function handleMouseMove(e){
+                    e = window.event||e;
+                    var cy = between(e.clientY- dragY,topPos,bottomPos);
+                    scrollValue = (cy - topPos)  / (bottomPos - topPos);
+                    $(slider).css({'top':(cy+'px')});
+                    return false;
+                }
+
+                //处理鼠标up事件
+                function handleMouseUp(){
+                    $(scrollbar).removeClass('bdbriscroll-ctrl-scroll-hover');
+                    $(scrollbar).removeClass('bdbriscroll-ctrl-scroll-touch');
+                    $(slider).removeClass('bdbriscroll-slider-hover');
+                    $(slider).removeClass('bdbriscroll-slider-touch');
+                    $(cont).css({'-moz-user-select':''});
+                    $(cont).css({'-webkit-user-select':''});
+                    if (circleTimer) window.clearInterval(circleTimer);
+
+                    if (docSelec) {
+                        document.onselectstart = docSelec;
+                    }else{
+                        document.onselectstart = function(){
+                            return true;
+                        };
+                    }
+
+                    $(document).unbind('mousemove',handleMouseMove);
+                    $(document).unbind('mouseup',handleMouseUp);
+
+                    $(slider).addClass('bdbriscroll-slider OP_LOG_BTN');
+                    dragging = 0;
+                    return false;
+                }
+
+                //点击空白处定位
+                function scrollClick(e){
+                    scrollToPos((e.offsetY||e.layerY)/globalHeight);
+                }
+
+                //滑动到指定位置
+                function scrollToPos(pos,stop){
+                    pos = pos < 0 ? 0 : pos;
+                    pos = pos > 1 ? 1 : pos;
+                    scrollValue = pos;
+                    var cy = (bottomPos - topPos) * scrollValue + topPos;
+                    $(slider).css({'top':(cy+'px')});
+                    if(!stop){
+                        notify();
+                    }
+                }
+
+                //处理滚轮事件
+                function scrollwheel(e){
+                    e.preventDefault();
+                    e = e.originalEvent;
+
+                    if(e){
+                        this.onwheel = 1;
+                        var delta = (-e.wheelDelta || (e.detail && e.detail*40) || 0)/wheeldelta;
+                        var pos = delta;
+                        var ntp = pos > 0 ? content.scrollTop + 2 : content.scrollTop - 2;
+
+                        $(cont).css({'zoom':'1'});
+
+                        if(ntp > 0 && ntp < (cont.offsetHeight-content.offsetHeight)){
+                            content.scrollTop += pos;
+                            scrollValue = content.scrollTop/(content.scrollHeight-content.offsetHeight);
+                        }else{
+                            if(!mousewheellock || $(scrollbar).css('display')=='none'){
+                                document.documentElement.scrollTop += pos;
+                                document.body.scrollTop += pos;
+                            }
+                        }
+                    }
+                }
+
+                //更新滑块大小比例
+                function updateScale(value){
+                    scale = (value > 10) ? 10 : value;
+                    if (scale <= 1 ) {
+                        $(slider).css({'display':'none'});
+                        return;
+                    }
+                    $(slider).css({'display':'block'});
+                    var distance = globalHeight - 2 * ctrlHeight;
+                    sliderHeight = parseInt(distance / scale);
+                    sliderHeight =  (sliderHeight < 15) ? 15 : sliderHeight;
+                    bottomPos = globalHeight - ctrlHeight - sliderHeight;
+                    $(slider).css({'height':(sliderHeight + 'px')});
+                }
+
+                if (scale > 1) {
+                    updateScale(scale);
+                }
+
+                this.dispose = function(){
+                    if (docSelec) {
+                        document.onselectstart = docSelec;
+                    }else{
+                        document.onselectstart = function(){
+                            return true;
+                        };
+                    }
+
+                    $(document).unbind('mousemove',handleMouseMove);
+                    $(document).unbind('mouseup',handleMouseUp);
+                    $(document).unbind("mouseup",_recover);
+
+                    // 清除定时器
+                    if(circleTimer){
+                        clearInterval(circleTimer);
+                    }
+                    if(upControlTimer){
+                        clearInterval(upControlTimer);
+                    }
+                    if(downCtrlTimer){
+                        clearInterval(downCtrlTimer);
+                    }
+                    if(timer){
+                        clearInterval(timer);
+                    }
+                };
+
+            }
+
+            var briscrollwrapperHeight = $(window).height() - $bri.offset().top - 34;
+            $briscrollwrapper.height(briscrollwrapperHeight);
+            briscroll = new scrollbarv({
+                "content" : $briscrollwrapper.get(0),
+                "length" : briscrollwrapperHeight - 20,
+                "mousewheellock" : true,
+                "wheeldelta" : 5
+            });
+
+            $(window).on("resize",function(){
+                var briscrollwrapperHeight = $(window).height() - $bri.offset().top - 34;
+                $briscrollwrapper.height(briscrollwrapperHeight);
+                briscroll && briscroll.render(briscrollwrapperHeight - 20);
+            });
+
+            // $bdbrimore.on("click",function(){
+            //     expand();
+            // });
+        };
+
+        //briheight = $bridom.find(".briscrollwrapper").height();
+        briheight = 600;
+        calheight = ($(window).height() < briheight)? briheight : $(window).height();
+        $(window).on("resize",function(){
+            calheight = ($(window).height() < briheight)? briheight : $(window).height();
+            $bridom && $bridom.css({"min-height":calheight});
+            if(!$.support.leadingWhitespace){
+                $bridom && $bridom.css({"height":calheight});
+            }
+        });
+        $.each($bridom.find("a"),function(i,a){
+            $(a).on("mousedown",function(){
+                $(a).attr("name") && nsc($(a).attr("name"));
+            });
+        });
+    }
+
+    $.each($(".bri-btlinks").find("a"),function(i,a){
+        $(a).on("mousedown",function(){
+            $(a).attr("name") && nsc($(a).attr("name"));
+        });
+    });
+
+});
+
+function toast(info){
+    var str='<div class="toast-for-result"><span></span></div>';
+    $("body").append(str);
+    $(".toast-for-result").fadeIn(300).find("span").text(info);
+    setTimeout(function(){
+        $(".toast-for-result").fadeOut(300);
+        $(".toast-for-result").remove();
+    }, 2000);
+}
+
+/*hammerhead|script|end*/
